@@ -6,27 +6,58 @@ from flask_cors import CORS
 
 from .database.models import db_drop_and_create_all, setup_db, Drink
 from .auth.auth import AuthError, requires_auth
+import logging
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 setup_db(app)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+logging.basicConfig(filename="api.log", level=logging.ERROR)
+
+@app.after_request
+def after_request(response):
+    """Modify response headers including Access-Control-* headers.
+
+    :param response: An instance of the response object.
+    :return: As instance of the response object with Access-Control-* headers.
+    """
+    response.headers.add(
+        "Access-Control-Allow-Headers", "Content-Type, Authorization"
+    )
+    response.headers.add(
+        "Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS"
+    )
+    return response
 
 '''
-@TODO uncomment the following line to initialize the datbase
+Initialize the datbase on the first run
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
 # db_drop_and_create_all()
 
 ## ROUTES
-'''
-@TODO implement endpoint
-    GET /drinks
-        it should be a public endpoint
-        it should contain only the drink.short() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
+
+@app.route("/drinks", methods=['GET'])
+def get_drinks():
+    '''
+        GET /drinks
+            it should be a public endpoint
+            it should contain only the drink.short() data representation
+        returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
+            or appropriate status code indicating reason for failure
+    ''' 
+    try:
+        drinks = Drink.query.all()
+        drinks_short = [drink.short() for drink in drinks]
+        return jsonify({"sucess":True,"drinks":drinks_short})
+    
+    except Exception as e:
+        logging.exception(e)
+        abort(500)
+    
+
+    
 
 
 '''
@@ -108,3 +139,10 @@ def unprocessable(error):
 @TODO implement error handler for AuthError
     error handler should conform to general task above 
 '''
+if __name__ == "__main__":
+    app.run(
+        debug=True,
+        use_debugger=False,
+        use_reloader=False,
+        passthrough_errors=True,
+    )
