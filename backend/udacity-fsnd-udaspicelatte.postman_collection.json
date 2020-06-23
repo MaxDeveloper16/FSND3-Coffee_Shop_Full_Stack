@@ -484,7 +484,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Water3\",\n    \"recipe\": {\n        \"name\": \"Water\",\n        \"color\": \"blue\",\n        \"parts\": 1\n    }\n}"
+							"raw": "{\n    \"title\": \"Water3\",\n    \"recipe\": [\n    \t{\n\t        \"name\": \"Water\",\n\t        \"color\": \"blue\",\n\t        \"parts\": 1\n\t    }\t\n\t]\n}"
 						},
 						"url": {
 							"raw": "{{host}}/drinks",
@@ -531,7 +531,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Water5\"\n}"
+							"raw": "{\n    \"title\": \"Water5\",\n    \"recipe\": [\n    \t{\n\t        \"name\": \"Water\",\n\t        \"color\": \"blue\",\n\t        \"parts\": 1\n\t    }\t\n\t]\n}"
 						},
 						"url": {
 							"raw": "{{host}}/drinks/1",

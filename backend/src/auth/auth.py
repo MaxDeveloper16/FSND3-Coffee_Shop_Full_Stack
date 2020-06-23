@@ -76,22 +76,11 @@ def check_permissions(permission, payload):
         Raise an AuthError if the requested permission string is not in the payload permissions array
         return true otherwise
     '''
-    if "permissions" not in payload:
-        raise AuthError(
-            {
-                "code": "invalid_claims",
-                "description": "Permissions not included in the token.",
-            },
-            403,
-        )
+    permissions = payload.get('permissions')
+    if permissions and permission in permissions:
+        return True
 
-    if permission not in payload["permissions"]:
-        raise AuthError(
-            {"code": "unauthorized", "description": "Permission not found."},
-            403,
-        )
-
-    return True
+    return False
 
 def verify_decode_jwt(token):
     '''
@@ -109,11 +98,8 @@ def verify_decode_jwt(token):
     if current_app.config.get('TESTING'):
         if not request.args.get('verify_token'):
             return jwt.get_unverified_claims(token)
-    try:
-     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
-    except Exception as e:
-        logging.exception(e)
 
+    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
 
     # Get the data in the header

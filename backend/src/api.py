@@ -46,7 +46,7 @@ Initialize the datbase on the first run
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
-# db_drop_and_create_all()
+db_drop_and_create_all()
 
 ## ROUTES
 
@@ -123,6 +123,7 @@ def post_drink(payload):
         new_drink.insert()
 
         return jsonify({"success": True, "drinks": [new_drink.short()],})
+
     
     except Exception as e:
         logging.exception(e)
